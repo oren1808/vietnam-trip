@@ -1,6 +1,7 @@
-// Offline service worker for the trip app. 799278078931 is replaced at build time.
-const V = 'vt-799278078931';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+// Offline service worker for the trip app. 6f4269fff596 is replaced at build time.
+const V = 'vt-6f4269fff596';
+const PAGES = ["./index.html", "./games.html"];
+const CORE = ['./', ...PAGES, './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', e => {
@@ -36,14 +37,16 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin) return;
 
   // The page: try the network briefly (fresh version when there is signal), else the cached copy.
-  if (req.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('/index.html')) {
+  const page = PAGES.find(p => url.pathname.endsWith(p.slice(1))) || (url.pathname.endsWith('/') ? './index.html' : null);
+  if (page || req.mode === 'navigate') {
+    const key = page || './index.html';
     e.respondWith((async () => {
       const c = await caches.open(V);
       try {
         const res = await Promise.race([fetch(req, {cache: 'no-store'}), timeout(3500)]);
-        if (res.ok) { c.put('./index.html', res.clone()); return res; }
+        if (res.ok) { c.put(key, res.clone()); return res; }
       } catch (_) {}
-      return (await c.match('./index.html')) || (await c.match('./')) || Response.error();
+      return (await c.match(key)) || (await c.match('./index.html')) || Response.error();
     })());
     return;
   }
