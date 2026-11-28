@@ -1,5 +1,5 @@
-// Offline service worker for the trip app. 1f58d1fda2f9 is replaced at build time.
-const V = 'vt-1f58d1fda2f9';
+// Offline service worker for the trip app. 6c9347ed92f6 is replaced at build time.
+const V = 'vt-6c9347ed92f6';
 const PAGES = ["./index.html", "./games.html"];
 const CORE = ['./', ...PAGES, './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
